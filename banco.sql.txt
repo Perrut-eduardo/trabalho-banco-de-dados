@@ -1,0 +1,77 @@
+CREATE TABLE Participante (
+  participante_id SERIAL PRIMARY KEY,
+  nome VARCHAR(200) NOT NULL,
+  cpf VARCHAR(14) UNIQUE,
+  telefone VARCHAR(20),
+  email VARCHAR(200),
+  data_nascimento DATE
+);
+
+CREATE TABLE Conjuge (
+  conjuge_id SERIAL PRIMARY KEY,
+  participante_id INTEGER NOT NULL REFERENCES Participante(participante_id) ON DELETE CASCADE,
+  nome VARCHAR(200),
+  cpf VARCHAR(14),
+  telefone VARCHAR(20)
+);
+
+CREATE TABLE Evento (
+  evento_id SERIAL PRIMARY KEY,
+  titulo VARCHAR(200) NOT NULL,
+  data_inicio DATE,
+  data_fim DATE,
+  local VARCHAR(255),
+  preco_full NUMERIC(10,2)
+);
+
+CREATE TABLE Inscricao (
+  inscricao_id SERIAL PRIMARY KEY,
+  participante_id INTEGER NOT NULL REFERENCES Participante(participante_id),
+  evento_id INTEGER NOT NULL REFERENCES Evento(evento_id),
+  data_hora_inscricao TIMESTAMP,
+  status_inscricao VARCHAR(50),
+  tipo_quarto VARCHAR(50),
+  observacoes TEXT
+);
+
+CREATE TABLE Pagamento (
+  pagamento_id SERIAL PRIMARY KEY,
+  inscricao_id INTEGER NOT NULL REFERENCES Inscricao(inscricao_id) ON DELETE CASCADE,
+  valor NUMERIC(10,2),
+  forma_pagamento VARCHAR(50),
+  parcelas INTEGER,
+  status_pagamento VARCHAR(50),
+  data_pagamento DATE
+);
+
+CREATE TABLE Quarto (
+  quarto_id SERIAL PRIMARY KEY,
+  numero VARCHAR(20),
+  tipo VARCHAR(50),
+  capacidade INTEGER,
+  acessivel BOOLEAN
+);
+
+CREATE TABLE Alocacao (
+  alocacao_id SERIAL PRIMARY KEY,
+  inscricao_id INTEGER NOT NULL REFERENCES Inscricao(inscricao_id),
+  quarto_id INTEGER NOT NULL REFERENCES Quarto(quarto_id),
+  checkin DATE,
+  checkout DATE,
+  regime_refeicao VARCHAR(100)
+);
+
+CREATE TABLE Feedback (
+  feedback_id SERIAL PRIMARY KEY,
+  inscricao_id INTEGER NOT NULL REFERENCES Inscricao(inscricao_id),
+  nota INTEGER,
+  comentario TEXT,
+  data_envio DATE
+);
+
+CREATE TABLE Certificado (
+  certificado_id SERIAL PRIMARY KEY,
+  inscricao_id INTEGER NOT NULL REFERENCES Inscricao(inscricao_id),
+  numero_certificado VARCHAR(50),
+  data_emis DATE
+);
